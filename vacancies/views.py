@@ -2,20 +2,24 @@ from django.shortcuts import render
 from rest_framework import generics
 from helpers.pagination import CustomPagination
 from .serializer import VacancySerializer
-from .models import Vacancy
+from .models import Vacancy, Company, Workers, Category
 from django.db.models import Count
 from django.db.models import Q
+from rest_framework.views import APIView
+from rest_framework.response import Response
 
 
 # Create your views here.
 
 # ALL VACANCIES:
-class AllVacanciesView(generics.ListAPIView):
-    queryset = Vacancy.objects.all()
+class AllVacanciesView(APIView):
     serializer_class = VacancySerializer
-    pagination_class = CustomPagination
+    queryset = Vacancy.objects.all()
 
-    def get_queryset(self):
-        return self.queryset.annotate(vacancy_count=Count('title')).annotate(
-            company_count=Count('company__title')).annotate(
-            workers_count=Count('category__workers__name'))
+    def get(self, request, format=None):
+        company_count = Company.objects.all().count()
+        vacancy_count = Category.objects.all().count()
+        worker_count = Workers.objects.all().count()
+        return Response({'company_count': company_count,
+                         'vacancy_count': vacancy_count,
+                         'worker_count': worker_count})

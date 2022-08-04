@@ -15,12 +15,9 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class VacancySerializer(serializers.ModelSerializer):
-    # company = CompanySerializer()
-    # category = CategorySerializer()
-    company_count = serializers.IntegerField()
-    vacancy_count = serializers.IntegerField()
-    workers_count = serializers.IntegerField()
+    company = CompanySerializer()
+    category = CategorySerializer()
 
     class Meta:
         model = Vacancy
-        fields = ('company_count', 'workers_count', 'vacancy_count')
+        fields = "__all__"
